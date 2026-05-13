@@ -1,92 +1,56 @@
 <template>
   <div class="login-page">
-    <div class="login-container">
-      <!-- =========================================================
-        Left Branding Panel
-        Displays corporate identity and system status information.
-      ========================================================== -->
-      <aside class="login-panel">
-        <div class="login-panel__content">
-          <AppLogo
-              width="200px"
-              class="login-panel__logo"
-          />
+    <div class="login-card">
+      <aside class="login-brand">
+        <div class="login-brand__grid" />
+        <div class="login-brand__glow login-brand__glow--tr" />
+        <div class="login-brand__glow login-brand__glow--bl" />
+        <div class="login-brand__signal" />
 
-          <p class="login-panel__tagline">
-            Intelligence for the Industrial Frontier.
+        <div class="login-brand__content">
+          <AppLogo width="180px" class="login-brand__logo" />
+
+          <p class="login-brand__tagline">
+            Intelligence for the<br />Industrial Frontier.
           </p>
         </div>
 
-        <div class="login-panel__footer">
-          <font-awesome-icon
-              icon="circle-check"
-              class="login-panel__status-icon"
-          />
-
-          <span>SYSTEM OPERATIONAL</span>
+        <div class="login-brand__status">
+          <span class="login-brand__dot" />
+          <span class="login-brand__status-text">SYSTEM OPERATIONAL</span>
         </div>
       </aside>
 
-      <!-- =========================================================
-        Login Content Section
-        Contains authentication form and user feedback messages.
-      ========================================================== -->
-      <main class="login-content">
-        <header class="login-content__header">
-          <h1 class="login-content__title">
-            Login
-          </h1>
-
-          <p class="login-content__subtitle">
+      <main class="login-main">
+        <header class="login-main__header">
+          <h1 class="login-main__title">Welcome back</h1>
+          <p class="login-main__subtitle">
             Access your property management dashboard
           </p>
         </header>
 
-        <!-- =========================================================
-          Authentication Error Alert
-          Displayed when the authentication store returns an error.
-        ========================================================== -->
         <div
-            v-if="authStore.status === 'error'"
-            class="login-alert login-alert--error"
+          v-if="authStore.status === 'error'"
+          class="login-alert"
         >
-          <div class="login-alert__icon">
-            <font-awesome-icon icon="triangle-exclamation" />
-          </div>
-
+          <font-awesome-icon icon="triangle-exclamation" class="login-alert__icon" />
           <div class="login-alert__body">
-            <p>
-              Access denied: Invalid credentials or expired session.
-              Please verify your information and try again.
+            <p class="login-alert__message">
+              Invalid credentials or expired session. Please verify your information and try again.
             </p>
-
-            <a
-                href="#"
-                class="login-alert__link"
-            >
-              View support details →
-            </a>
+            <a href="#" class="login-alert__link">View support details &rarr;</a>
           </div>
         </div>
 
-        <!-- =========================================================
-          Login Form Component
-          Emits login-submit event with user credentials.
-        ========================================================== -->
         <LoginForm
-            :is-loading="authStore.isLoading"
-            @login-submit="handleLogin"
+          :is-loading="authStore.isLoading"
+          @login-submit="handleLogin"
         />
 
-        <footer class="login-content__footer">
+        <footer class="login-main__footer">
           <p>
             New to Nexora?
-            <a
-                href="#"
-                class="login-content__link"
-            >
-              Register your property
-            </a>
+            <a href="#" class="login-main__link">Register your property</a>
           </p>
         </footer>
       </main>
@@ -95,55 +59,18 @@
 </template>
 
 <script setup>
-/* ================================================================
-  Components
-================================================================ */
 import AppLogo from '@/components/AppLogo.vue';
 import LoginForm from '../components/LoginForm.vue';
-
-/* ================================================================
-  Stores
-================================================================ */
 import { useAuthStore } from '../store/authStore';
-
-/* ================================================================
-  Vue Router
-================================================================ */
 import { useRouter } from 'vue-router';
 
-/* ================================================================
-  Store & Router Instances
-================================================================ */
 const authStore = useAuthStore();
 const router = useRouter();
 
-/* ================================================================
-  Methods
-================================================================ */
-
-/**
- * Handles user authentication flow.
- *
- * Responsibilities:
- * - Sends user credentials to the authentication store.
- * - Redirects the user to the dashboard after successful login.
- * - Captures and logs authentication errors.
- *
- * @async
- * @function handleLogin
- * @param {Object} credentials - User login credentials.
- * @param {string} credentials.email - User email address.
- * @param {string} credentials.password - User password.
- *
- * @returns {Promise<void>}
- */
 const handleLogin = async (credentials) => {
   try {
     await authStore.login(credentials);
-
-    router.push({
-      name: 'dashboard',
-    });
+    router.push({ name: 'dashboard' });
   } catch (error) {
     console.error('Login error:', error.message);
   }
@@ -151,192 +78,270 @@ const handleLogin = async (credentials) => {
 </script>
 
 <style scoped>
-/* ================================================================
-  Layout: Main Page Wrapper
-================================================================ */
 .login-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-
-  background-color: #f0f2f5;
+  padding: 24px;
+  background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
 }
 
-/* ================================================================
-  Login Card Container
-================================================================ */
-.login-container {
+.login-card {
   display: flex;
-
   width: 100%;
-  max-width: 1000px;
-  min-height: 600px;
-
+  max-width: 960px;
+  min-height: 640px;
+  border-radius: 16px;
   overflow: hidden;
-
   background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  animation: card-enter 0.5s ease-out;
 }
 
-/* ================================================================
-  Left Panel (Branding / Hero Section)
-================================================================ */
-.login-panel {
-  flex: 1;
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
+/* ─── Left Brand Panel ─── */
+
+.login-brand {
+  flex: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  padding: 4rem;
-
+  padding: 3.5rem;
+  background: linear-gradient(160deg, #0b1a30 0%, #162d5a 40%, #1e3a6f 100%);
   color: #ffffff;
-
-  /* Corporate gradient overlay + background image */
-  background:
-      linear-gradient(
-          rgba(23, 49, 131, 0.9),
-          rgba(23, 49, 131, 0.9)
-      ),
-      url('@/assets/login-bg.jpg') center / cover;
+  overflow: hidden;
 }
 
-.login-panel__logo {
-  margin-bottom: 1.5rem;
-
-  /* Force white logo color for dark background */
-  color: #ffffff !important;
+.login-brand__grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
 }
 
-.login-panel__tagline {
+.login-brand__glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+}
+
+.login-brand__glow--tr {
+  width: 350px;
+  height: 350px;
+  background: rgba(255, 115, 0, 0.1);
+  top: -120px;
+  right: -100px;
+}
+
+.login-brand__glow--bl {
+  width: 280px;
+  height: 280px;
+  background: rgba(0, 255, 136, 0.07);
+  bottom: -80px;
+  left: -80px;
+}
+
+.login-brand__signal {
+  position: absolute;
+  bottom: 6rem;
+  right: 3.5rem;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15));
+  pointer-events: none;
+}
+
+.login-brand__signal::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.login-brand__content {
+  position: relative;
+  z-index: 1;
+}
+
+.login-brand__logo {
+  margin-bottom: 2rem;
+  color: #ffffff;
+}
+
+.login-brand__tagline {
   font-family: var(--font-titles);
-  font-size: 1.2rem;
-  line-height: 1.4;
-
-  opacity: 0.9;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  opacity: 0.85;
+  font-weight: 400;
 }
 
-.login-panel__footer {
+.login-brand__status {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 10px;
-
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0.8;
 }
 
-.login-panel__status-icon {
-  color: #00ff88;
+.login-brand__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff88;
+  animation: pulse-dot 2s ease-in-out infinite;
 }
 
-/* ================================================================
-  Right Panel (Authentication Area)
-================================================================ */
-.login-content {
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 0 6px rgba(0, 255, 136, 0);
+  }
+}
+
+/* ─── Right Main Panel ─── */
+
+.login-main {
   flex: 1;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  padding: 4rem;
+  padding: 3.5rem;
 }
 
-.login-content__title {
-  margin-bottom: 0.5rem;
-
-  font-size: 2.5rem;
-  color: var(--secondary-color);
-}
-
-.login-content__subtitle {
+.login-main__header {
   margin-bottom: 2rem;
-
-  color: #666666;
 }
 
-/* ================================================================
-  Alert Component
-================================================================ */
+.login-main__title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+}
+
+.login-main__subtitle {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+/* ─── Alert ─── */
+
 .login-alert {
   display: flex;
-  gap: 1rem;
-
-  margin-bottom: 2rem;
-  padding: 1.2rem;
-
-  background: #fff1f0;
-  border-left: 4px solid #ff4d4f;
-  border-radius: 4px;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
 }
 
 .login-alert__icon {
-  font-size: 1.2rem;
-  color: #ff4d4f;
+  color: #ef4444;
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .login-alert__body p {
   margin: 0;
-
-  font-size: 0.9rem;
-  color: #444444;
+  font-size: 0.85rem;
+  color: #7f1d1d;
 }
 
 .login-alert__link {
   display: inline-block;
-
-  margin-top: 0.5rem;
-
-  font-size: 0.85rem;
-  font-weight: 700;
-
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--secondary-color);
   text-decoration: none;
 }
 
-/* ================================================================
-  Footer Section
-================================================================ */
-.login-content__footer {
-  margin-top: 3rem;
-  padding-top: 2rem;
+.login-alert__link:hover {
+  text-decoration: underline;
+}
 
+/* ─── Footer ─── */
+
+.login-main__footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
   text-align: center;
   font-size: 0.9rem;
-
-  border-top: 1px solid #eeeeee;
+  color: #888;
+  border-top: 1px solid #f0f0f0;
 }
 
-.login-content__link {
-  font-weight: 700;
-
-  color: var(--secondary-color);
+.login-main__link {
+  font-weight: 600;
+  color: var(--primary-color);
   text-decoration: none;
 }
 
-/* ================================================================
-  Responsive Design
-================================================================ */
-@media (max-width: 850px) {
-  /*
-    Hide branding panel on smaller screens
-    to prioritize form usability.
-  */
-  .login-panel {
+.login-main__link:hover {
+  text-decoration: underline;
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 860px) {
+  .login-brand {
     display: none;
   }
 
-  .login-container {
-    max-width: 500px;
+  .login-card {
+    max-width: 480px;
     min-height: auto;
   }
 
-  .login-content {
+  .login-main {
     padding: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 0;
+  }
+
+  .login-card {
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  .login-main {
+    padding: 2rem;
   }
 }
 </style>
