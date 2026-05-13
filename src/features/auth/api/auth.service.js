@@ -1,27 +1,58 @@
-import { MOCK_USER_RESPONSE } from './mocks/user.mock';
+import { MOCK_USERS, MOCK_TOKEN } from './mocks/user.mock';
 
-/**
- * Service to handle authentication requests.
- * Currently using simulated data (Fake API).
- */
+const failedAttempts = new Map();
+
 export const authService = {
-    /**
-     * Simulates a login request to the backend.
-     * @param {string} email - User email.
-     * @param {string} password - User password.
-     * @returns {Promise<Object>} The user DTO and token.
-     */
-    async login(email, password) {
-        // Simulate network latency (800ms)
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Simple mock validation
-                if (email === 'admin@nexora.com' && password === 'admin123') {
-                    resolve(MOCK_USER_RESPONSE);
-                } else {
-                    reject(new Error('Invalid credentials (Fake API)'));
-                }
-            }, 800);
+  async login(email, password) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const user = MOCK_USERS.find((u) => u.email === email);
+
+        if (!user) {
+          return reject({
+            code: 'USER_NOT_FOUND',
+            message: 'No account found with this email address.',
+          });
+        }
+
+        const attempts = failedAttempts.get(email) || 0;
+
+        if (attempts >= 3) {
+          return reject({
+            code: 'ACCOUNT_LOCKED',
+            message: 'Account is locked due to too many failed attempts. Please try again later.',
+          });
+        }
+
+        if (user.password !== password) {
+          const newCount = attempts + 1;
+          failedAttempts.set(email, newCount);
+
+          if (newCount >= 3) {
+            return reject({
+              code: 'ACCOUNT_LOCKED',
+              message: 'Account locked due to too many failed attempts. Please try again later.',
+            });
+          }
+
+          const remaining = 3 - newCount;
+          const attemptWord = remaining === 1 ? 'attempt' : 'attempts';
+
+          return reject({
+            code: 'INVALID_PASSWORD',
+            message: `Incorrect password. ${remaining} ${attemptWord} remaining.`,
+          });
+        }
+
+        failedAttempts.delete(email);
+
+        const { password: _, ...safeUser } = user;
+
+        resolve({
+          token: MOCK_TOKEN,
+          user: safeUser,
         });
-    }
+      }, 800);
+    });
+  },
 };
