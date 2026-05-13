@@ -30,21 +30,29 @@
         </header>
 
         <div
-          v-if="authStore.status === 'error'"
+          v-if="serverAlert"
           class="login-alert"
         >
           <font-awesome-icon icon="triangle-exclamation" class="login-alert__icon" />
           <div class="login-alert__body">
-            <p class="login-alert__message">
-              Invalid credentials or expired session. Please verify your information and try again.
-            </p>
-            <a href="#" class="login-alert__link">View support details &rarr;</a>
+            <p>{{ serverAlert.message }}</p>
+          </div>
+        </div>
+
+        <div v-if="loginSuccess" class="login-success">
+          <font-awesome-icon icon="circle-check" class="login-success__icon" />
+          <div class="login-success__body">
+            <h2 class="login-success__title">Signed in successfully</h2>
+            <p class="login-success__text">Redirecting to dashboard...</p>
           </div>
         </div>
 
         <LoginForm
+          v-else
           :is-loading="authStore.isLoading"
+          :field-errors="fieldErrors"
           @login-submit="handleLogin"
+          @clear-errors="handleClearErrors"
         />
 
         <footer class="login-main__footer">
@@ -59,6 +67,7 @@
 </template>
 
 <script setup>
+import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import LoginForm from '../components/LoginForm.vue';
 import { useAuthStore } from '../store/authStore';
@@ -67,10 +76,46 @@ import { useRouter } from 'vue-router';
 const authStore = useAuthStore();
 const router = useRouter();
 
+const loginSuccess = ref(false);
+
+const fieldErrors = computed(() => {
+  const error = authStore.serverError;
+
+  if (!error) return {};
+
+  switch (error.code) {
+    case 'USER_NOT_FOUND':
+      return { email: error.message };
+    case 'INVALID_PASSWORD':
+      return { password: error.message };
+    default:
+      return {};
+  }
+});
+
+const serverAlert = computed(() => {
+  const error = authStore.serverError;
+
+  if (!error) return null;
+
+  if (error.code === 'USER_NOT_FOUND' || error.code === 'INVALID_PASSWORD') {
+    return null;
+  }
+
+  return error;
+});
+
+const handleClearErrors = () => {
+  authStore.clearErrors();
+};
+
 const handleLogin = async (credentials) => {
   try {
     await authStore.login(credentials);
-    router.push({ name: 'dashboard' });
+    loginSuccess.value = true;
+    setTimeout(() => {
+      router.push({ name: 'dashboard' });
+    }, 1500);
   } catch (error) {
     console.error('Login error:', error.message);
   }
@@ -290,6 +335,33 @@ const handleLogin = async (credentials) => {
 
 .login-alert__link:hover {
   text-decoration: underline;
+}
+
+/* ─── Success State ─── */
+
+.login-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 1rem;
+}
+
+.login-success__icon {
+  font-size: 3rem;
+  color: #22c55e;
+  margin-bottom: 1rem;
+}
+
+.login-success__title {
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+}
+
+.login-success__text {
+  color: #888;
+  font-size: 0.9rem;
 }
 
 /* ─── Footer ─── */

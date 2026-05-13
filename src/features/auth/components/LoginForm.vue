@@ -7,10 +7,13 @@
         v-model="credentials.email"
         type="email"
         class="login-form__input"
+        :class="{ 'login-form__input--error': fieldErrors.email }"
         placeholder="name@company.com"
         required
         autocomplete="email"
+        @input="onInput"
       />
+      <span v-if="fieldErrors.email" class="login-form__error">{{ fieldErrors.email }}</span>
     </div>
 
     <div class="login-form__group">
@@ -24,9 +27,11 @@
           v-model="credentials.password"
           :type="showPassword ? 'text' : 'password'"
           class="login-form__input"
+          :class="{ 'login-form__input--error': fieldErrors.password }"
           placeholder="Enter your password"
           required
           autocomplete="current-password"
+          @input="onInput"
         />
         <button
           type="button"
@@ -37,6 +42,7 @@
           <font-awesome-icon :icon="showPassword ? 'eye-slash' : 'eye'" />
         </button>
       </div>
+      <span v-if="fieldErrors.password" class="login-form__error">{{ fieldErrors.password }}</span>
     </div>
 
     <label class="login-form__checkbox-label">
@@ -69,11 +75,15 @@
 <script setup>
 import { reactive, ref } from 'vue';
 
-defineProps({
+const props = defineProps({
   isLoading: Boolean,
+  fieldErrors: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
-const emit = defineEmits(['login-submit']);
+const emit = defineEmits(['login-submit', 'clear-errors']);
 
 const showPassword = ref(false);
 const credentials = reactive({
@@ -81,6 +91,10 @@ const credentials = reactive({
   password: '',
   remember: false,
 });
+
+const onInput = () => {
+  emit('clear-errors');
+};
 
 const handleSubmit = () => {
   emit('login-submit', { ...credentials });
@@ -279,6 +293,23 @@ const handleSubmit = () => {
   border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
+}
+
+.login-form__input--error {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.login-form__input--error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  background: #fef2f2;
+}
+
+.login-form__error {
+  font-size: 0.78rem;
+  color: #ef4444;
+  line-height: 1.4;
 }
 
 @keyframes spin {
