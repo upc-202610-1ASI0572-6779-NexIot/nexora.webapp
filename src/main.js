@@ -5,9 +5,9 @@ import router from './router'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCircleCheck, faTriangleExclamation, faEye, faEyeSlash, faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faTriangleExclamation, faEye, faEyeSlash, faArrowRightToBracket, faMicrochip, faLightbulb, faLock, faWifi, faGear } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faCircleCheck, faTriangleExclamation, faEye, faEyeSlash, faArrowRightToBracket)
+library.add(faCircleCheck, faTriangleExclamation, faEye, faEyeSlash, faArrowRightToBracket, faMicrochip, faLightbulb, faLock, faWifi, faGear)
 
 import './style.css'
 

@@ -1,5 +1,13 @@
 <template>
   <div class="login-page">
+    <div class="login-page__decor">
+      <font-awesome-icon icon="microchip" class="login-page__decor-icon login-page__decor-icon--chip" />
+      <font-awesome-icon icon="lightbulb" class="login-page__decor-icon login-page__decor-icon--bulb" />
+      <font-awesome-icon icon="lock" class="login-page__decor-icon login-page__decor-icon--lock" />
+      <font-awesome-icon icon="wifi" class="login-page__decor-icon login-page__decor-icon--wifi" />
+      <font-awesome-icon icon="gear" class="login-page__decor-icon login-page__decor-icon--gear" />
+    </div>
+
     <div class="login-card">
       <aside class="login-brand">
         <div class="login-brand__grid" />
@@ -22,45 +30,47 @@
       </aside>
 
       <main class="login-main">
-        <header class="login-main__header">
-          <h1 class="login-main__title">Welcome back</h1>
-          <p class="login-main__subtitle">
-            Access your property management dashboard
-          </p>
-        </header>
+        <div class="login-main__body">
+          <header class="login-main__header">
+            <h1 class="login-main__title">Welcome back</h1>
+            <p class="login-main__subtitle">
+              Access your property management dashboard
+            </p>
+          </header>
 
-        <div
-          v-if="serverAlert"
-          class="login-alert"
-        >
-          <font-awesome-icon icon="triangle-exclamation" class="login-alert__icon" />
-          <div class="login-alert__body">
-            <p>{{ serverAlert.message }}</p>
+          <div
+            v-if="serverAlert"
+            class="login-alert"
+          >
+            <font-awesome-icon icon="triangle-exclamation" class="login-alert__icon" />
+            <div class="login-alert__body">
+              <p>{{ serverAlert.message }}</p>
+            </div>
           </div>
-        </div>
 
-        <div v-if="loginSuccess" class="login-success">
-          <font-awesome-icon icon="circle-check" class="login-success__icon" />
-          <div class="login-success__body">
-            <h2 class="login-success__title">Signed in successfully</h2>
-            <p class="login-success__text">Redirecting to dashboard...</p>
+          <div v-if="loginSuccess" class="login-success">
+            <font-awesome-icon icon="circle-check" class="login-success__icon" />
+            <div class="login-success__body">
+              <h2 class="login-success__title">Signed in successfully</h2>
+              <p class="login-success__text">Redirecting to dashboard...</p>
+            </div>
           </div>
+
+          <LoginForm
+            v-else
+            :is-loading="authStore.isLoading"
+            :field-errors="fieldErrors"
+            @login-submit="handleLogin"
+            @clear-errors="handleClearErrors"
+          />
+
+          <footer class="login-main__footer">
+            <p>
+              New to Nexora?
+              <a href="#" class="login-main__link">Register your property</a>
+            </p>
+          </footer>
         </div>
-
-        <LoginForm
-          v-else
-          :is-loading="authStore.isLoading"
-          :field-errors="fieldErrors"
-          @login-submit="handleLogin"
-          @clear-errors="handleClearErrors"
-        />
-
-        <footer class="login-main__footer">
-          <p>
-            New to Nexora?
-            <a href="#" class="login-main__link">Register your property</a>
-          </p>
-        </footer>
       </main>
     </div>
   </div>
@@ -129,10 +139,27 @@ const handleLogin = async (credentials) => {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(255, 115, 0, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(23, 49, 131, 0.05) 0%, transparent 50%),
+    linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
+}
+
+.login-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.7) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
 }
 
 .login-card {
+  position: relative;
+  z-index: 1;
   display: flex;
   width: 100%;
   max-width: 960px;
@@ -279,7 +306,13 @@ const handleLogin = async (credentials) => {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.login-main__body {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  flex: 1;
   padding: 3.5rem;
 }
 
@@ -297,6 +330,75 @@ const handleLogin = async (credentials) => {
 .login-main__subtitle {
   color: #888;
   font-size: 0.95rem;
+}
+
+/* ─── Page Decorative Elements ─── */
+
+.login-page__decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-page__decor-icon {
+  position: absolute;
+  opacity: 0.07;
+}
+
+.login-page__decor-icon--chip {
+  top: 6%;
+  right: 3%;
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  animation: float-icon 6s ease-in-out infinite;
+}
+
+.login-page__decor-icon--bulb {
+  bottom: 8%;
+  left: 3%;
+  font-size: 2.5rem;
+  color: var(--secondary-color);
+  animation: float-icon 8s ease-in-out infinite 1s;
+}
+
+.login-page__decor-icon--lock {
+  top: 44%;
+  right: 2%;
+  font-size: 2rem;
+  color: var(--primary-color);
+  animation: float-icon 7s ease-in-out infinite 2.5s;
+}
+
+.login-page__decor-icon--wifi {
+  bottom: 10%;
+  right: 5%;
+  font-size: 2.8rem;
+  color: var(--secondary-color);
+  animation: float-icon 9s ease-in-out infinite 0.5s;
+}
+
+.login-page__decor-icon--gear {
+  top: 8%;
+  left: 3%;
+  font-size: 2.8rem;
+  color: var(--primary-color);
+  animation: spin-icon 10s linear infinite;
+}
+
+@keyframes float-icon {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin-icon {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ─── Alert ─── */
@@ -388,6 +490,10 @@ const handleLogin = async (credentials) => {
 /* ─── Responsive ─── */
 
 @media (max-width: 860px) {
+  .login-page__decor {
+    display: none;
+  }
+
   .login-brand {
     display: none;
   }
@@ -397,7 +503,7 @@ const handleLogin = async (credentials) => {
     min-height: auto;
   }
 
-  .login-main {
+  .login-main__body {
     padding: 2.5rem;
   }
 }
@@ -412,7 +518,7 @@ const handleLogin = async (credentials) => {
     min-height: 100vh;
   }
 
-  .login-main {
+  .login-main__body {
     padding: 2rem;
   }
 }
