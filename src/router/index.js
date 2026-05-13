@@ -7,6 +7,11 @@ const routes = [
         component: () => import('../features/auth/views/LoginView.vue')
     },
     {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import('../features/landlord-dashboard/views/DashboardView.vue')
+    },
+    {
         path: '/',
         redirect: '/login'
     }
