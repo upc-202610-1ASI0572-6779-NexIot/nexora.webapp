@@ -94,6 +94,8 @@ const chartOptions = ref({
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;     /* prevents expanding beyond grid track */
+  overflow: hidden; /* clips the chart, forces .chart-body to scroll */
 }
 
 .chart-header-row {

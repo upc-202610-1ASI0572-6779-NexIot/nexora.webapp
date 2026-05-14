@@ -4,12 +4,19 @@
       <h3 class="trends-title">System Health Trends</h3>
       <span class="badge-optimized">Optimized</span>
     </div>
-    
-    <!-- This outer div clips and scrolls -->
+
+    <!--
+      .chart-outer  → overflow-x:auto (shows the scrollbar)
+      .chart-inner  → fixed 560px wide (forces the Bar to be wider than the card)
+      responsive:false → Chart.js respects the inline style width instead of filling its parent
+    -->
     <div class="chart-outer">
-      <!-- This inner div has a fixed width so the chart renders at full size -->
       <div class="chart-inner">
-        <Bar :data="chartData" :options="chartOptions" :style="{ width: '560px', height: '220px' }" />
+        <Bar
+          :data="chartData"
+          :options="chartOptions"
+          :style="{ width: '560px', height: '220px', display: 'block' }"
+        />
       </div>
     </div>
   </div>
@@ -41,19 +48,18 @@ const chartData = ref({
       hoverBackgroundColor: '#cbd5e1',
       borderRadius: 4,
       data: [45, 65, 60, 85, 95, 90, 100],
-      barPercentage: 0.6,
+      barPercentage: 0.55,
       categoryPercentage: 0.7
     }
   ]
 });
 
 const chartOptions = ref({
-  responsive: false,   // ← KEY: must be false so chart respects the fixed width
-  maintainAspectRatio: false,
+  responsive: false,          // MUST be false — otherwise Chart.js ignores the fixed width
+  maintainAspectRatio: false, // height also controlled by inline style
+  animation: false,
   plugins: {
-    legend: {
-      display: false
-    },
+    legend: { display: false },
     tooltip: {
       backgroundColor: '#2f2f2f',
       titleFont: { family: 'sans-serif' },
@@ -62,16 +68,10 @@ const chartOptions = ref({
     }
   },
   scales: {
-    y: {
-      display: false,
-      beginAtZero: true
-    },
+    y: { display: false, beginAtZero: true },
     x: {
-      grid: {
-        display: false,
-        drawBorder: true,
-        borderColor: '#eaeaea'
-      },
+      grid: { display: false },
+      border: { color: '#eaeaea' },
       ticks: {
         font: { family: 'sans-serif', size: 11, weight: '600' },
         color: '#94a3b8',
@@ -88,10 +88,12 @@ const chartOptions = ref({
   border-radius: 4px;
   padding: 24px;
   border: 1px solid #eaeaea;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  /* These two together prevent the card from expanding past its grid track */
+  min-width: 0;
+  overflow: hidden;
 }
 
 .trends-header {
@@ -99,6 +101,7 @@ const chartOptions = ref({
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  flex-shrink: 0;
 }
 
 .trends-title {
@@ -118,35 +121,26 @@ const chartOptions = ref({
   font-weight: 700;
 }
 
-/* The outer scrollable container */
+/* Scroll container — constrained by the card which is constrained by the grid cell */
 .chart-outer {
   overflow-x: auto;
   overflow-y: hidden;
-  padding-bottom: 6px; /* space for scrollbar thumb */
+  /* leave room so the scrollbar doesn't overlap the chart */
+  padding-bottom: 8px;
 }
 
-/* The inner div forces the fixed width */
+/* Fixed-size inner box forces the chart to be wider than the card at small widths */
 .chart-inner {
-  width: 560px; /* must match the :style width on <Bar> */
+  width: 560px;   /* wider than a typical mobile card */
   height: 220px;
 }
 
-/* Custom scrollbar styling */
-.chart-outer::-webkit-scrollbar {
-  height: 6px;
-}
+/* ─── Custom scrollbar ─── */
+.chart-outer::-webkit-scrollbar        { height: 6px; }
+.chart-outer::-webkit-scrollbar-track  { background: #f1f5f9; border-radius: 10px; }
+.chart-outer::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 10px; }
+.chart-outer::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-.chart-outer::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.chart-outer::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-.chart-outer::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+/* Firefox */
+.chart-outer { scrollbar-width: thin; scrollbar-color: #cbd5e1 #f1f5f9; }
 </style>

@@ -1,4 +1,4 @@
-import { MOCK_USERS, MOCK_TOKEN } from './mocks/user.mock';
+import { MOCK_USERS, MOCK_TOKEN } from '../mocks/user.mock';
 
 const failedAttempts = new Map();
 
