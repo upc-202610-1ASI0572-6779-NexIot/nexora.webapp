@@ -78,9 +78,9 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import AppLogo from '@/components/AppLogo.vue';
+import AppLogo from '@/shared/presentation/components/AppLogo.vue';
 import LoginForm from '../components/LoginForm.vue';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../../application/store/authStore';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
