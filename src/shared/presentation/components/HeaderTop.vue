@@ -4,12 +4,12 @@
       <button class="menu-btn" @click="$emit('toggle-sidebar')">
         <font-awesome-icon icon="bars" />
       </button>
-      <h1 class="page-title">Main Dashboard</h1>
+      <h1 class="page-title">Properties Management</h1>
     </div>
     
     <div class="search-bar">
       <font-awesome-icon icon="magnifying-glass" class="search-icon" />
-      <input type="text" placeholder="Search devices or alerts..." />
+      <input type="text" placeholder="Search properties, tenants, or devices..." />
     </div>
     
     <div class="header-actions">
@@ -17,8 +17,10 @@
         <font-awesome-icon icon="bell" />
         <span class="notification-dot"></span>
       </button>
-      <button class="icon-btn">
-        <font-awesome-icon icon="circle-question" />
+      
+      <button class="register-btn">
+        <font-awesome-icon icon="building" class="register-icon" />
+        <span class="register-text">Register New Property</span>
       </button>
     </div>
   </header>
@@ -37,13 +39,14 @@ defineEmits(['toggle-sidebar']);
   background-color: white;
   border-bottom: 1px solid #eaeaea;
   gap: 24px;
-  height: 72px; /* Fixed height for consistent layout */
+  height: 72px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 0;
 }
 
 .menu-btn {
@@ -53,6 +56,7 @@ defineEmits(['toggle-sidebar']);
   font-size: 1.2rem;
   color: #1a3673;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .page-title {
@@ -62,6 +66,8 @@ defineEmits(['toggle-sidebar']);
   color: #1a3673;
   margin: 0;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search-bar {
@@ -107,6 +113,7 @@ defineEmits(['toggle-sidebar']);
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-shrink: 0;
 }
 
 .icon-btn {
@@ -140,6 +147,30 @@ defineEmits(['toggle-sidebar']);
   border: 2px solid white;
 }
 
+.register-btn {
+  background-color: #e67e22; /* Primary orange */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.register-btn:hover {
+  background-color: #d35400; /* Darker orange */
+}
+
+.register-icon {
+  font-size: 1rem;
+}
+
 /* Responsiveness */
 @media (max-width: 1024px) {
   .menu-btn {
@@ -157,11 +188,33 @@ defineEmits(['toggle-sidebar']);
 
 @media (max-width: 768px) {
   .search-bar {
-    display: none; /* Hide search on mobile header to save space */
+    display: none;
   }
   
   .header-left {
     flex: 1;
+  }
+  
+  .register-text {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.1rem;
+  }
+  
+  .register-btn {
+    padding: 8px 12px;
+  }
+  
+  .dashboard-header {
+    gap: 12px;
+  }
+  
+  .header-actions {
+    gap: 12px;
   }
 }
 </style>

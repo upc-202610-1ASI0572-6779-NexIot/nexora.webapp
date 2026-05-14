@@ -12,7 +12,7 @@
     </div>
     <div class="chart-body">
       <div class="chart-scroll-wrapper">
-        <Bar :data="chartData" :options="chartOptions" />
+        <Bar :data="chartData" :options="chartOptions" :style="{ width: '620px', height: '260px' }" />
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@ const chartData = ref({
 });
 
 const chartOptions = ref({
-  responsive: true,
+  responsive: false,
   maintainAspectRatio: false,
   plugins: {
     legend: {
@@ -146,20 +146,17 @@ const chartOptions = ref({
 }
 
 .chart-body {
-  flex: 1;
-  min-height: 250px;
   overflow-x: auto;
   overflow-y: hidden;
-  position: relative;
   border-top: 1px solid #eaeaea;
   border-bottom: 1px solid #eaeaea;
   padding-top: 16px;
-  padding-bottom: 16px;
+  padding-bottom: 22px; /* space for scrollbar */
 }
 
 .chart-scroll-wrapper {
-  height: 100%;
-  min-width: 600px; /* Ensure chart scrolls */
+  width: 620px;  /* must match :style width on <Bar> */
+  height: 260px; /* must match :style height on <Bar> */
 }
 
 /* Responsiveness */
