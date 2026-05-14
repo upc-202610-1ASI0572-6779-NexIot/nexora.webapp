@@ -1,21 +1,25 @@
 <template>
   <header class="dashboard-header">
-    <button class="menu-btn" @click="$emit('toggle-sidebar')">
-      <font-awesome-icon icon="bars" />
-    </button>
+    <div class="header-left">
+      <button class="menu-btn" @click="$emit('toggle-sidebar')">
+        <font-awesome-icon icon="bars" />
+      </button>
+      <h1 class="page-title">Main Dashboard</h1>
+    </div>
     
     <div class="search-bar">
       <font-awesome-icon icon="magnifying-glass" class="search-icon" />
-      <input type="text" placeholder="Search buildings, devices..." />
+      <input type="text" placeholder="Search devices or alerts..." />
     </div>
     
     <div class="header-actions">
-      <button class="icon-btn">
+      <button class="icon-btn notification-btn">
         <font-awesome-icon icon="bell" />
+        <span class="notification-dot"></span>
       </button>
-      <div class="user-profile">
-        <span class="avatar">AR</span>
-      </div>
+      <button class="icon-btn">
+        <font-awesome-icon icon="circle-question" />
+      </button>
     </div>
   </header>
 </template>
@@ -27,11 +31,19 @@ defineEmits(['toggle-sidebar']);
 <style scoped>
 .dashboard-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 16px 32px;
-  background-color: transparent;
+  background-color: white;
+  border-bottom: 1px solid #eaeaea;
   gap: 24px;
+  height: 72px; /* Fixed height for consistent layout */
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .menu-btn {
@@ -39,75 +51,93 @@ defineEmits(['toggle-sidebar']);
   background: none;
   border: none;
   font-size: 1.2rem;
-  color: var(--secondary-color);
+  color: #1a3673;
   cursor: pointer;
-  margin-right: auto;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-family: var(--font-titles, sans-serif);
+  font-weight: 700;
+  color: #1a3673;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .search-bar {
   display: flex;
   align-items: center;
-  background-color: transparent;
-  border-bottom: 1px solid transparent;
-  padding: 4px 8px;
+  background-color: #f8f9fc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 16px;
+  flex: 1;
+  max-width: 400px;
   margin-right: auto;
+  margin-left: 24px;
+  transition: border-color 0.2s;
 }
 
 .search-bar:focus-within {
-  border-bottom: 1px solid var(--secondary-color);
+  border-color: #1a3673;
+  background-color: white;
 }
 
 .search-icon {
   color: #7f8c8d;
-  margin-right: 8px;
+  margin-right: 12px;
+  font-size: 1rem;
 }
 
 .search-bar input {
   border: none;
   background: transparent;
   outline: none;
-  font-family: var(--font-general);
-  color: var(--text-color);
-  width: 200px;
+  font-family: var(--font-general, sans-serif);
+  color: #2c3e50;
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+.search-bar input::placeholder {
+  color: #95a5a6;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .icon-btn {
   background: none;
   border: none;
-  color: #2f2f2f;
-  font-size: 1.2rem;
+  color: #1a3673;
+  font-size: 1.25rem;
   cursor: pointer;
-  transition: color 0.2s;
-}
-
-.icon-btn:hover {
-  color: var(--primary-color);
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.avatar {
-  background-color: var(--secondary-color);
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  transition: opacity 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  font-family: var(--font-titles);
+}
+
+.icon-btn:hover {
+  opacity: 0.8;
+}
+
+.notification-btn {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #e74c3c;
+  border-radius: 50%;
+  border: 2px solid white;
 }
 
 /* Responsiveness */
@@ -116,12 +146,22 @@ defineEmits(['toggle-sidebar']);
     display: block;
   }
   
+  .dashboard-header {
+    padding: 12px 16px;
+  }
+  
+  .page-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
   .search-bar {
     display: none; /* Hide search on mobile header to save space */
   }
   
-  .dashboard-header {
-    padding: 12px 16px;
+  .header-left {
+    flex: 1;
   }
 }
 </style>
