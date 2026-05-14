@@ -1,8 +1,14 @@
 <template>
   <div class="chart-container">
-    <div class="chart-header">
-      <font-awesome-icon icon="table-cells-large" class="chart-icon" />
-      <h3 class="chart-title">Weekly Consumption by Building</h3>
+    <div class="chart-header-row">
+      <div class="chart-header-text">
+        <h3 class="chart-title">Gas Levels (PPM)</h3>
+        <p class="chart-subtitle">Live telemetry from Zone A-D over last 24h</p>
+      </div>
+      <div class="chart-toggle">
+        <button class="toggle-btn active">24 HOURS</button>
+        <button class="toggle-btn">7 DAYS</button>
+      </div>
     </div>
     <div class="chart-body">
       <div class="chart-scroll-wrapper">
@@ -28,14 +34,18 @@ import {
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 const chartData = ref({
-  labels: ['Building A', 'Building B', 'Building C', 'Building D', 'Building E'],
+  labels: ['12 AM', '3 AM', '6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM'],
   datasets: [
     {
-      label: 'Consumption (kWh)',
-      backgroundColor: 'rgba(23, 49, 131, 0.1)',
-      hoverBackgroundColor: '#173183',
-      borderRadius: 4,
-      data: [320, 450, 210, 390, 280]
+      label: 'Gas Level (PPM)',
+      // We can use an array of colors to match the design (gray for normal, orange/red for high)
+      backgroundColor: [
+        '#e2e8f0', '#e2e8f0', '#e2e8f0', '#fdb173', '#e2e8f0', 
+        '#e2e8f0', '#e2e8f0', '#fca5a5'
+      ],
+      hoverBackgroundColor: '#94a3b8',
+      borderRadius: 2,
+      data: [120, 180, 100, 420, 150, 140, 180, 480]
     }
   ]
 });
@@ -49,35 +59,25 @@ const chartOptions = ref({
     },
     tooltip: {
       backgroundColor: '#2f2f2f',
-      titleFont: { family: 'Inter' },
-      bodyFont: { family: 'Inter' },
+      titleFont: { family: 'sans-serif' },
+      bodyFont: { family: 'sans-serif' },
       padding: 12
     }
   },
   scales: {
     y: {
+      display: false, // Hide Y axis as in the design there are only faint grid lines without labels
       beginAtZero: true,
       grid: {
         color: '#f0f0f0',
         drawBorder: false
-      },
-      ticks: {
-        font: { family: 'Inter', size: 11 },
-        color: '#7f8c8d',
-        callback: (value) => value + ' kWh'
       }
     },
     x: {
+      display: false, // Hide X axis
       grid: {
         display: false,
         drawBorder: false
-      },
-      ticks: {
-        font: { family: 'Inter', size: 11 },
-        color: '#7f8c8d',
-        maxRotation: 45,
-        minRotation: 0,
-        autoSkip: true
       }
     }
   }
@@ -86,33 +86,63 @@ const chartOptions = ref({
 
 <style scoped>
 .chart-container {
-  background-color: #f8f9fc;
-  border-radius: 8px;
+  background-color: white;
+  border-radius: 4px;
   padding: 24px;
   border: 1px solid #eaeaea;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.chart-header {
+.chart-header-row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 24px;
-  color: var(--secondary-color);
 }
 
-.chart-icon {
-  font-size: 2rem;
-  margin-bottom: 8px;
+.chart-header-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .chart-title {
-  font-size: 1.1rem;
-  font-family: var(--font-general);
-  font-weight: 600;
-  color: var(--secondary-color);
+  font-size: 1.25rem;
+  font-family: var(--font-general, sans-serif);
+  font-weight: 700;
+  color: #1a3673;
+  margin: 0 0 4px 0;
+}
+
+.chart-subtitle {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.chart-toggle {
+  display: flex;
+  background-color: #f8f9fc;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #7f8c8d;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toggle-btn.active {
+  background-color: #e2e8f0;
+  color: #2c3e50;
 }
 
 .chart-body {
@@ -121,14 +151,25 @@ const chartOptions = ref({
   overflow-x: auto;
   overflow-y: hidden;
   position: relative;
+  border-top: 1px solid #eaeaea;
+  border-bottom: 1px solid #eaeaea;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .chart-scroll-wrapper {
   height: 100%;
-  min-width: 100%;
+  min-width: 600px; /* Ensure chart scrolls */
 }
 
 /* Responsiveness */
+@media (max-width: 768px) {
+  .chart-header-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
 @media (max-width: 480px) {
   .chart-container {
     padding: 16px;
@@ -136,39 +177,8 @@ const chartOptions = ref({
     min-width: 0;
   }
   
-  .chart-scroll-wrapper {
-    min-width: 450px; /* Ensure chart doesn't squash, instead it scrolls */
-  }
-  
-  .chart-body {
-    min-height: 220px;
-    width: 100%;
-  }
-  
-  .chart-title {
-    font-size: 1rem;
-  }
-  
-  .chart-icon {
-    font-size: 1.5rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .chart-container {
-    padding: 12px;
-  }
-  
-  .chart-scroll-wrapper {
-    min-width: 400px;
-  }
-  
   .chart-body {
     min-height: 200px;
-  }
-  
-  .chart-header {
-    margin-bottom: 16px;
   }
 }
 
@@ -188,6 +198,6 @@ const chartOptions = ref({
 }
 
 .chart-body::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color);
+  background: #999;
 }
 </style>
